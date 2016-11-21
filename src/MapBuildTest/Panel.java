@@ -1,0 +1,170 @@
+package MapBuildTest;
+
+
+import MapBuildTest.EditClasses.RemovePointEdit;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+
+/**
+ *
+ * Drawing pane for graph
+ * 
+ */
+public class Panel extends JPanel{
+    private Model model;
+    private SelectionController sc;
+    private List<MapPoint> questionsLeft;
+    private MapPoint currentQ;
+    private Boolean incorrectFlag;
+    private Boolean isLast;
+    private int type;
+    
+    public static final int BUILD = 0;
+    public static final int TEST = 1;
+    
+    public Panel(int ty){
+        this.setPreferredSize(new Dimension(1280, 720));
+        this.type = ty;
+        isLast = false;
+    }
+    
+    
+    public int getType(){
+        return type;
+    }
+    
+    public void setModel(Model gm){
+        if(this.model != null)
+        {
+            model.removeAllListeners();
+        }
+        
+        this.model = gm;
+        model.addChangeListener(new ChangeListener(){
+            @Override
+            public void changeEventReceived(ChangeEvent evt){
+                Panel.this.repaint();
+            }
+        });
+        sc = new SelectionController(gm, this);
+    }
+    
+    public SelectionController getSelectionController(){
+        return this.sc;
+    }
+      
+    
+    public void removeSelection(){
+        if(sc.getSelection() == null) return;
+        model.edit(new RemovePointEdit(model, sc.getSelection()));
+    }
+    
+    public Point getCenter(Rectangle r){
+        return new Point(r.x + r.width/2, r.y + r.height/2);
+    }
+    
+    public Model getModel(){
+        return this.model;
+    }
+    
+    
+    public void start(){
+        isLast = false;
+        questionsLeft = new ArrayList<MapPoint>(model.getPoints()) {};
+        if(questionsLeft.size()<1){
+            return;
+        }
+        Collections.shuffle(questionsLeft);
+        model.setScore(0,0,0);
+        nextQuestion();
+    }
+    
+    public void nextQuestion(){
+        if(questionsLeft==null || questionsLeft.size()<1){
+            isLast = true;
+            return;
+        }
+        currentQ = questionsLeft.get(0);
+        questionsLeft.remove(0);
+        incorrectFlag = false;
+        this.repaint();
+    }
+    
+    public MapPoint getCurrent(){
+        return currentQ;
+    }
+    
+    public void newSel(){
+        if((!isLast) && sc.getSelection().getName() == null ? currentQ.getName() == null : sc.getSelection().getName().equals(currentQ.getName())){
+            if(!incorrectFlag){
+                model.addCorrect();
+            }
+            nextQuestion();
+        } else if (!incorrectFlag){
+            model.addIncorrect();
+            incorrectFlag = true;
+            questionsLeft.add(currentQ);
+        }
+    }
+    
+    protected void paintPoint(Graphics2D g, MapPoint gv){
+        Rectangle pos = gv.getPosition();
+        if(sc.isSelected(gv))
+        {
+            g.setColor(Color.CYAN.darker());
+        }else g.setColor(Color.CYAN);
+        g.fillRect(pos.x, pos.y, pos.width, pos.height);
+        
+        g.setColor(Color.BLACK);
+        g.drawRect(pos.x, pos.y, pos.width, pos.height);
+    }
+    
+
+    @Override
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        
+        if(model.getBG()!=null){
+            try {
+                g.drawImage(ImageIO.read(model.getBG()), 0, 60, null);
+            } catch (IOException ex) {
+                Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        MapPoint grv = sc.getSelection();
+        for(MapPoint gv : model.getPoints())
+        {
+            paintPoint((Graphics2D)g, gv);
+        }
+        
+        switch(type){
+            case BUILD:
+                if(sc.getSelection() != null){
+                    g.drawString("Current selection: " + grv.getName(), 20, 20);
+                }
+                break;
+            case TEST:
+                if(currentQ != null){
+                    g.drawString("Click " + currentQ.getName(), 20, 20);
+                }       
+                g.drawString((questionsLeft!=null ? "Questions left: " + questionsLeft.size() : " ") + " Total number of questions: " + model.getTotal() + "\n Correctly answered: " + model.getCorrect() + "\n Incorrectly answered " + model.getIncorrect(), 20, 35);
+                if(isLast){
+                    g.drawString("All questions have been answered", 20, 50);
+                }
+        }
+
+    }
+}
