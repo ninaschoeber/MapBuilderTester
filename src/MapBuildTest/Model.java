@@ -26,6 +26,7 @@ public class Model{
     private int total;
     private int correct;
     private int incorrect;
+    private int savedHeight;
         
     public Model(){
         this.listeners = new CopyOnWriteArrayList<>();
@@ -35,6 +36,7 @@ public class Model{
         total = 0;
         correct = 0;
         incorrect = 0;
+        savedHeight = 0;
     }
     
     public Model(File model) throws IOException {
@@ -61,6 +63,14 @@ public class Model{
              actions.redo();
              this.change();
         }
+    }
+    
+    public int getSavedHeight(){
+        return savedHeight;
+    }
+    
+    public void setSavedHeight(int h){
+        savedHeight = h;
     }
     
     public int getTotal(){
@@ -124,6 +134,7 @@ public class Model{
         if(bg==null){
             throw new IllegalArgumentException("Cannot save without image");
         }
+        writer.println(savedHeight);
         writer.println(bg.getPath());
         writer.println(points.size());
         for(MapPoint gv : points) writer.println(gv.saveString());
@@ -160,6 +171,7 @@ public class Model{
         BufferedReader in = new BufferedReader(new FileReader(input));
         buffer = in.readLine();
         Scanner s = new Scanner(buffer);
+        savedHeight = Integer.parseInt(s.next());
         bg = new File(s.next());
         buffer = in.readLine();
         s = new Scanner(buffer);

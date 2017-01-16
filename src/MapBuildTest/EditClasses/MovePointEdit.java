@@ -3,6 +3,7 @@ package MapBuildTest.EditClasses;
 
 import MapBuildTest.MapPoint;
 import MapBuildTest.Model;
+import MapBuildTest.Panel;
 import java.awt.Point;
 import javax.swing.undo.AbstractUndoableEdit;
 
@@ -10,16 +11,17 @@ import javax.swing.undo.AbstractUndoableEdit;
 
 public class MovePointEdit extends AbstractUndoableEdit{
     
-    private final Model model;
+    private final Panel panel;
     private final MapPoint moved;
     private final Point start;
     private final Point end;
     
-    public MovePointEdit(Model model, MapPoint moved, Point start, Point end){
-        this.model = model;
+    public MovePointEdit(Model model, Panel panel, MapPoint moved, Point start, Point end){
         this.moved = moved;
         this.start = start;
         this.end = end;
+        this.panel = panel;
+        moved.setPosition(end.x,end.y);
     }
     
     @Override

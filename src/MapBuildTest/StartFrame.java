@@ -1,6 +1,7 @@
 package MapBuildTest;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,10 +37,11 @@ public class StartFrame extends JFrame{
         super("Start Menu");
         this.add(test = new JButton("Test"),BorderLayout.NORTH);
         this.add(build = new JButton("Build"),BorderLayout.SOUTH);
-        
+        this.getContentPane().setBackground(Color.white);
         addListeners();
         
-        this.setPreferredSize(new Dimension(1280, 720));
+        //this.setPreferredSize(new Dimension(1280, 720));
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.pack();
         this.setLocationRelativeTo(null);

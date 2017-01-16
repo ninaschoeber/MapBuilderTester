@@ -2,6 +2,7 @@ package MapBuildTest;
 
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -99,10 +100,14 @@ public class TestFrame extends JFrame{
         
         this.add(buttons, BorderLayout.NORTH);
         this.add(gp = new Panel(Panel.TEST));
+        gp.setBackground(Color.white);
+        buttons.setBackground(Color.white);
+        
         setModel(new Model());
         
         addListeners();
         
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);

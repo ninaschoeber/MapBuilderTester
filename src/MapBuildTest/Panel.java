@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,14 +31,17 @@ public class Panel extends JPanel{
     private Boolean incorrectFlag;
     private Boolean isLast;
     private int type;
+    private float scaler;
+    private int newHeight;
     
     public static final int BUILD = 0;
     public static final int TEST = 1;
     
     public Panel(int ty){
-        this.setPreferredSize(new Dimension(1280, 720));
+        //this.setPreferredSize(new Dimension(1280, 720));
         this.type = ty;
         isLast = false;
+        newHeight = this.getHeight();
     }
     
     
@@ -59,6 +63,7 @@ public class Panel extends JPanel{
             }
         });
         sc = new SelectionController(gm, this);
+        newHeight = gm.getSavedHeight();
     }
     
     public SelectionController getSelectionController(){
@@ -119,6 +124,16 @@ public class Panel extends JPanel{
         }
     }
     
+    public float getScaler(){
+        return scaler;
+    }
+    
+    private void scaleAllPoints(){
+        for(MapPoint gv : model.getPoints()){
+            gv.scalePoint(newHeight,this.getHeight());
+        }
+    }
+    
     protected void paintPoint(Graphics2D g, MapPoint gv){
         Rectangle pos = gv.getPosition();
         if(sc.isSelected(gv))
@@ -138,15 +153,27 @@ public class Panel extends JPanel{
         
         if(model.getBG()!=null){
             try {
-                g.drawImage(ImageIO.read(model.getBG()), 0, 60, null);
+                BufferedImage bgImage = ImageIO.read(model.getBG());
+                float imgHeight = bgImage.getHeight();
+                scaler = (this.getHeight()-60) / imgHeight;
+                int newW = (int) (bgImage.getWidth()*scaler);
+                int newH = (int) (bgImage.getHeight()*scaler);
+                g.drawImage(bgImage, 0, 60, newW, newH, null);
             } catch (IOException ex) {
                 Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
+        //To avoid scaling at 1.01
+        //if((float)this.getHeight()/newHeight > 1.2 || (float)this.getHeight()/newHeight < 0.8){
+        if(this.getHeight()!=newHeight){
+            //System.out.println((float)this.getHeight()/newHeight);
+            scaleAllPoints();
+            newHeight = this.getHeight();
+        }
+        
         MapPoint grv = sc.getSelection();
-        for(MapPoint gv : model.getPoints())
-        {
+        for(MapPoint gv : model.getPoints()){
             paintPoint((Graphics2D)g, gv);
         }
         

@@ -3,6 +3,7 @@ package MapBuildTest;
 
 import MapBuildTest.EditClasses.AddPointEdit;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
@@ -18,9 +19,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -116,15 +114,14 @@ public class BuildFrame extends JFrame {
             System.out.println("Error loading button redo");
         }
         
-        //buttons.add(changeNode = new JButton("Change name")); //No rename image yet, maybe in context menu
-        //buttons.add(deleteNode = new JButton("Delete point")); //In context menu?
-
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);       
         this.add(buttons, BorderLayout.NORTH);
         this.add(gp = new Panel(Panel.BUILD));
+        gp.setBackground(Color.white);
+        buttons.setBackground(Color.white);
         this.setModel(new Model());
         
         addListeners();
-        
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -150,7 +147,7 @@ public class BuildFrame extends JFrame {
                     try{
                         BuildFrame.this.gp.getModel().save(f);
                     }catch(IOException ex){
-                        JOptionPane.showMessageDialog(BuildFrame.this, "Error writing graph to file", "Warning!", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(BuildFrame.this, "Error writing file", "Warning!", JOptionPane.WARNING_MESSAGE);
                     }
                     
                 }
@@ -166,7 +163,7 @@ public class BuildFrame extends JFrame {
                     try {
                         BuildFrame.this.gp.getModel().load(fc.getSelectedFile());
                     }catch(IOException ex){
-                        JOptionPane.showMessageDialog(BuildFrame.this, "Error loading graph from file", "Warning!", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(BuildFrame.this, "Error loading file", "Warning!", JOptionPane.WARNING_MESSAGE);
                     }
                 }
             }

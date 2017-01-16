@@ -8,10 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-/**
- *
- * @author jos
- */
 public class SelectionController implements MouseListener, MouseMotionListener{
     private Model model;
     private Panel panel;
@@ -55,20 +51,22 @@ public class SelectionController implements MouseListener, MouseMotionListener{
     }
     
     @Override
-    public void mouseClicked(MouseEvent e){
-        if(e.getButton() == MouseEvent.BUTTON3){
-            selected = null;
-            panel.repaint();
-            return;
-        }
-        
+    public void mouseClicked(MouseEvent e){    
+        boolean selectionChanged = false;
         for(MapPoint gv : model.getPoints()){
             if(gv.getPosition().intersects(new Rectangle(e.getX(), e.getY(), 1, 1)))
             {   
                 selected = gv;
+                selectionChanged = true;
                 if(panel.getType()==1) panel.newSel();
                 break;
             }
+        }
+        if(e.getButton() == MouseEvent.BUTTON3 && selectionChanged){
+            ContextMenu menu = new ContextMenu(panel);
+            menu.show(e.getComponent(), e.getX(), e.getY());
+        } else if (!selectionChanged) {
+            selected = null;
         }
         panel.repaint();
     }
@@ -78,12 +76,12 @@ public class SelectionController implements MouseListener, MouseMotionListener{
         if(panel.getType()==1) return; //No dragging in test mode
         for(MapPoint gv : model.getPoints()){
             if(gv.getPosition().intersects(new Rectangle(e.getX(), e.getY(), 1, 1))){
+                System.out.println("Dragging");
                 tracked = gv;
                 lastPos = e.getPoint();
                 startPos = new Point();
                 startPos.x = tracked.getPosition().x;
                 startPos.y = tracked.getPosition().y;
-                              
                 break;
                 
             }
@@ -93,11 +91,12 @@ public class SelectionController implements MouseListener, MouseMotionListener{
     @Override
     public void mouseReleased(MouseEvent e){
         if(startPos != null && tracked != null){
+            System.out.println("Released");
             Point endPos = new Point();
             endPos.x = tracked.getPosition().x;
             endPos.y = tracked.getPosition().y;
             
-            model.edit(new MovePointEdit(model, tracked, startPos, endPos));
+            model.edit(new MovePointEdit(model, panel, tracked, startPos, endPos));
         }
         
         startPos = null;
@@ -120,11 +119,12 @@ public class SelectionController implements MouseListener, MouseMotionListener{
                 startPos.y = tracked.getPosition().y;
             }
             
-            int newX = lastPos.x - e.getX();
-            int newY = lastPos.y - e.getY();
+            int newX = lastPos.x; //- e.getX();
+            int newY = lastPos.y; //- e.getY();
             
-            tracked.getPosition().x -= newX;
-            tracked.getPosition().y -= newY;
+            //tracked.getPosition(panel.getScaler()).x -= newX;
+            //tracked.getPosition(panel.getScaler()).y -= newY;
+            tracked.setPosition(newX, newY);
             panel.repaint();
         }
         lastPos = e.getPoint();
