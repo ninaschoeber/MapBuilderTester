@@ -159,9 +159,7 @@ public class Panel extends JPanel{
         g.setColor(Color.LIGHT_GRAY);
         g.drawLine(pos.x+(pos.width/2), pos.y+(pos.height/2), pos.x+(pos.width/2), pos.y+(pos.height/2)+10);
         
-        if(sc.isSelected(gv)){
-            g.setColor(Color.RED);
-        }else g.setColor(Color.RED);
+        g.setColor(gv.getColour());
         g.fillOval(pos.x, pos.y, pos.width, pos.height);
                 
         if(sc.isSelected(gv)){

@@ -1,6 +1,7 @@
 package MapBuildTest;
 
 
+import java.awt.Color;
 import java.awt.Rectangle;
 
 public class MapPoint
@@ -8,6 +9,7 @@ public class MapPoint
     protected String name;
     protected Rectangle position;
     private float scale;
+    private Color colour;
     
     public MapPoint(){
         this("Unnamed Point", new Rectangle(50, 50, 10, 10), 1);
@@ -22,9 +24,14 @@ public class MapPoint
     }
     
     public MapPoint(String name, Rectangle position, float scale){
+        this(name,position,scale,Color.red);
+    }
+    
+    public MapPoint(String name, Rectangle position, float scale, Color colour){
         this.name = name;
         this.position = position;
         this.scale = scale;
+        this.colour = colour;
     }
     
     public String getName(){
@@ -37,6 +44,14 @@ public class MapPoint
     
     public Rectangle getPosition(){
         return position;
+    }
+    
+    public Color getColour(){
+        return colour;
+    }
+    
+    public void setColour(Color c){
+        this.colour = c;
     }
     
     public void scalePoint(float s){
@@ -54,6 +69,6 @@ public class MapPoint
     
     public String saveString(){
         return position.x + " " + position.y + " " + 
-               position.width + " " + position.height + " " + name;
+               position.width + " " + position.height + " " + Integer.toString(colour.getRGB()) + " " + name;
     }
 }

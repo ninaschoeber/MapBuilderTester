@@ -1,5 +1,6 @@
 package MapBuildTest;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.File;
@@ -96,8 +97,8 @@ public class Model{
         this.change();
     }   
     
-    public void addPoint(String name, Rectangle position){
-        Model.this.addPoint(new MapPoint(name, position, scale));
+    public void addPoint(String name, Rectangle position, Color c){
+        Model.this.addPoint(new MapPoint(name, position, scale, c));
     }
     
     
@@ -187,12 +188,13 @@ public class Model{
             int y = s.nextInt();
             int width = s.nextInt();
             int height = s.nextInt();
+            Color c = new Color(Integer.parseInt(s.next()));
             String name = s.next();
             while (s.hasNext())
             {
                 name = name + " " + s.next(); //For name with spaces in it
             }
-            addPoint(name, new Rectangle(x,y,width,height));
+            addPoint(name, new Rectangle(x,y,width,height), c);
         }
         
         this.change();
