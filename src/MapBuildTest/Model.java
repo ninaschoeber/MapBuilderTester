@@ -26,7 +26,7 @@ public class Model{
     private int total;
     private int correct;
     private int incorrect;
-    private int savedHeight;
+    private float scale;
         
     public Model(){
         this.listeners = new CopyOnWriteArrayList<>();
@@ -36,7 +36,7 @@ public class Model{
         total = 0;
         correct = 0;
         incorrect = 0;
-        savedHeight = 0;
+        scale = 1;
     }
     
     public Model(File model) throws IOException {
@@ -65,12 +65,14 @@ public class Model{
         }
     }
     
-    public int getSavedHeight(){
-        return savedHeight;
+//only to be able to save the scale
+    public float getScale(){
+        return scale;
     }
     
-    public void setSavedHeight(int h){
-        savedHeight = h;
+    public void setScale(float s){
+        scale = s;
+        System.out.println("Scale model changed to " + scale);
     }
     
     public int getTotal(){
@@ -95,7 +97,7 @@ public class Model{
     }   
     
     public void addPoint(String name, Rectangle position){
-        Model.this.addPoint(new MapPoint(name, position));
+        Model.this.addPoint(new MapPoint(name, position, scale));
     }
     
     
@@ -134,7 +136,7 @@ public class Model{
         if(bg==null){
             throw new IllegalArgumentException("Cannot save without image");
         }
-        writer.println(savedHeight);
+        writer.println(scale);
         writer.println(bg.getPath());
         writer.println(points.size());
         for(MapPoint gv : points) writer.println(gv.saveString());
@@ -171,7 +173,9 @@ public class Model{
         BufferedReader in = new BufferedReader(new FileReader(input));
         buffer = in.readLine();
         Scanner s = new Scanner(buffer);
-        savedHeight = Integer.parseInt(s.next());
+        scale = Float.parseFloat(s.next());
+        buffer = in.readLine();
+        s = new Scanner(buffer);
         bg = new File(s.next());
         buffer = in.readLine();
         s = new Scanner(buffer);

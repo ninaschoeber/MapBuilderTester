@@ -7,26 +7,24 @@ public class MapPoint
 {
     protected String name;
     protected Rectangle position;
-    private float x;
-    private float y;
+    private float scale;
     
     public MapPoint(){
-        this("Unnamed Point", new Rectangle(50, 50, 10, 10));
+        this("Unnamed Point", new Rectangle(50, 50, 10, 10), 1);
     }
     
-    public MapPoint(String name){
-        this(name, new Rectangle(50, 50, 10, 10));
-        x = 50;
-        y = 50;
+    public MapPoint(String name, float scale){
+        this(name, new Rectangle(50, 50, 10, 10), scale);
     }
     
-    public MapPoint(Rectangle position){
-        this("Unnamed Point", position);
+    public MapPoint(Rectangle position, float scale){
+        this("Unnamed Point", position, scale);
     }
     
-    public MapPoint(String name, Rectangle position){
+    public MapPoint(String name, Rectangle position, float scale){
         this.name = name;
         this.position = position;
+        this.scale = scale;
     }
     
     public String getName(){
@@ -41,18 +39,17 @@ public class MapPoint
         return position;
     }
     
-    public void scalePoint(int oldH, int newH){
-        float scale = (float)newH/oldH;
-        x = x*scale;
-        y = (y-60)*scale + 60;
-        this.position = new Rectangle((int)x, (int)y, 10, 10);
+    public void scalePoint(float s){
+        int x = (int) (this.position.x*(s/scale));
+        int y = (int) ((this.position.y-60)*(s/scale)) + 60;
+        this.position = new Rectangle(x, y, 10, 10);
+        //System.out.println("aanpassing: " + s/scale);
+        scale = s;
     }
     
     public void setPosition(int x, int y){
         //System.out.println("x new: " + newX + " old " + x + ", y new: " + newY + " old: " + y + " scaler: " + scaler);
         this.position = new Rectangle(x, y, 10, 10);
-        this.x = x;
-        this.y = y;
     }
     
     public String saveString(){

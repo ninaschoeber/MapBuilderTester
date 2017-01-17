@@ -35,6 +35,8 @@ public class BuildFrame extends JFrame {
         private JButton deleteNode;
         private JButton undo;
         private JButton redo;
+        private JButton zoomIn;
+        private JButton zoomOut;
         
         private JButton save;
         private JButton load;
@@ -114,6 +116,9 @@ public class BuildFrame extends JFrame {
             System.out.println("Error loading button redo");
         }
         
+        buttons.add(zoomIn = new JButton("Zoom in"));
+        buttons.add(zoomOut = new JButton("Zoom out"));
+        
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);       
         this.add(buttons, BorderLayout.NORTH);
         this.add(gp = new Panel(Panel.BUILD));
@@ -132,7 +137,7 @@ public class BuildFrame extends JFrame {
         gp.setModel(model);
     }
     
-
+    
     private void addListeners(){
         //menubar buttons
         
@@ -187,7 +192,7 @@ public class BuildFrame extends JFrame {
             public void actionPerformed(ActionEvent e){
                 String s = (String)JOptionPane.showInputDialog(BuildFrame.this, "Name: ", "New node", JOptionPane.QUESTION_MESSAGE, null, null, null);
                 if(s == null) return;
-                gp.getModel().edit(new AddPointEdit(gp.getModel(), new MapPoint(s)));
+                gp.getModel().edit(new AddPointEdit(gp.getModel(), new MapPoint(s, gp.getScale())));
             }
         });
         /*
@@ -221,6 +226,22 @@ public class BuildFrame extends JFrame {
             public void actionPerformed(ActionEvent e)
             {
                 BuildFrame.this.gp.getModel().redo();
+            }
+        });
+        
+        zoomIn.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                BuildFrame.this.gp.zoom(true);
+            }
+        });
+        
+        zoomOut.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                BuildFrame.this.gp.zoom(false);
             }
         });
         

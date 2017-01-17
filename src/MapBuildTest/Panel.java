@@ -2,6 +2,7 @@ package MapBuildTest;
 
 
 import MapBuildTest.EditClasses.RemovePointEdit;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -31,8 +32,7 @@ public class Panel extends JPanel{
     private Boolean incorrectFlag;
     private Boolean isLast;
     private int type;
-    private float scaler;
-    private int newHeight;
+    private float scale;
     
     public static final int BUILD = 0;
     public static final int TEST = 1;
@@ -41,7 +41,7 @@ public class Panel extends JPanel{
         //this.setPreferredSize(new Dimension(1280, 720));
         this.type = ty;
         isLast = false;
-        newHeight = this.getHeight();
+        scale = 1;
     }
     
     
@@ -63,9 +63,27 @@ public class Panel extends JPanel{
             }
         });
         sc = new SelectionController(gm, this);
-        newHeight = gm.getSavedHeight();
+        scale = gm.getScale();
+        if(scale==0){
+            scale = 1;
+        }
+        scaleAllPoints();
     }
     
+    public void zoom(boolean in){ //if True zoom in, if False zoom out
+        if(in){
+            scale += 0.2;
+        } else {
+            if(scale>0.5){
+                scale -= 0.2;
+            }
+        }
+        model.setScale(scale); //only to be able to save the scale
+        scaleAllPoints();
+        //System.out.println(scale);
+        repaint();
+    }
+
     public SelectionController getSelectionController(){
         return this.sc;
     }
@@ -112,7 +130,7 @@ public class Panel extends JPanel{
     }
     
     public void newSel(){
-        if((!isLast) && sc.getSelection().getName() == null ? currentQ.getName() == null : sc.getSelection().getName().equals(currentQ.getName())){
+        if((!isLast) && sc.getSelection() == null ? currentQ.getName() == null : sc.getSelection().getName().equals(currentQ.getName())){
             if(!incorrectFlag){
                 model.addCorrect();
             }
@@ -124,26 +142,32 @@ public class Panel extends JPanel{
         }
     }
     
-    public float getScaler(){
-        return scaler;
+    public float getScale(){
+        return scale;
     }
     
     private void scaleAllPoints(){
         for(MapPoint gv : model.getPoints()){
-            gv.scalePoint(newHeight,this.getHeight());
+            gv.scalePoint(scale);
         }
     }
     
     protected void paintPoint(Graphics2D g, MapPoint gv){
         Rectangle pos = gv.getPosition();
-        if(sc.isSelected(gv))
-        {
-            g.setColor(Color.CYAN.darker());
-        }else g.setColor(Color.CYAN);
-        g.fillRect(pos.x, pos.y, pos.width, pos.height);
         
-        g.setColor(Color.BLACK);
-        g.drawRect(pos.x, pos.y, pos.width, pos.height);
+        g.setStroke(new BasicStroke(2));
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawLine(pos.x+(pos.width/2), pos.y+(pos.height/2), pos.x+(pos.width/2), pos.y+(pos.height/2)+10);
+        
+        if(sc.isSelected(gv)){
+            g.setColor(Color.RED);
+        }else g.setColor(Color.RED);
+        g.fillOval(pos.x, pos.y, pos.width, pos.height);
+                
+        if(sc.isSelected(gv)){
+            g.setColor(Color.WHITE);
+        }else g.setColor(Color.BLACK);
+        g.drawOval(pos.x, pos.y, pos.width, pos.height);
     }
     
 
@@ -151,27 +175,20 @@ public class Panel extends JPanel{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         
+        scale = model.getScale(); //because when the file is saved at a specific scale, the image does not load at that scale yet
+        
         if(model.getBG()!=null){
             try {
                 BufferedImage bgImage = ImageIO.read(model.getBG());
                 float imgHeight = bgImage.getHeight();
-                scaler = (this.getHeight()-60) / imgHeight;
-                int newW = (int) (bgImage.getWidth()*scaler);
-                int newH = (int) (bgImage.getHeight()*scaler);
+                int newW = (int) (bgImage.getWidth()*scale);
+                int newH = (int) (bgImage.getHeight()*scale);
                 g.drawImage(bgImage, 0, 60, newW, newH, null);
             } catch (IOException ex) {
                 Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        //To avoid scaling at 1.01
-        //if((float)this.getHeight()/newHeight > 1.2 || (float)this.getHeight()/newHeight < 0.8){
-        if(this.getHeight()!=newHeight){
-            //System.out.println((float)this.getHeight()/newHeight);
-            scaleAllPoints();
-            newHeight = this.getHeight();
-        }
-        
+
         MapPoint grv = sc.getSelection();
         for(MapPoint gv : model.getPoints()){
             paintPoint((Graphics2D)g, gv);

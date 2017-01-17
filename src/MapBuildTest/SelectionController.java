@@ -76,7 +76,6 @@ public class SelectionController implements MouseListener, MouseMotionListener{
         if(panel.getType()==1) return; //No dragging in test mode
         for(MapPoint gv : model.getPoints()){
             if(gv.getPosition().intersects(new Rectangle(e.getX(), e.getY(), 1, 1))){
-                System.out.println("Dragging");
                 tracked = gv;
                 lastPos = e.getPoint();
                 startPos = new Point();
@@ -91,7 +90,6 @@ public class SelectionController implements MouseListener, MouseMotionListener{
     @Override
     public void mouseReleased(MouseEvent e){
         if(startPos != null && tracked != null){
-            System.out.println("Released");
             Point endPos = new Point();
             endPos.x = tracked.getPosition().x;
             endPos.y = tracked.getPosition().y;

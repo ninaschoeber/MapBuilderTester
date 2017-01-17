@@ -34,6 +34,8 @@ public class TestFrame extends JFrame{
         private JButton highlight;
         private JButton next;
         private JButton load;
+        private JButton zoomIn;
+        private JButton zoomOut;
     
     private Panel gp;
         
@@ -96,7 +98,8 @@ public class TestFrame extends JFrame{
         } catch (IOException ex) {
             System.out.println("Error loading button next");
         }
-        
+        buttons.add(zoomIn = new JButton("Zoom in"));
+        buttons.add(zoomOut = new JButton("Zoom out"));
         
         this.add(buttons, BorderLayout.NORTH);
         this.add(gp = new Panel(Panel.TEST));
@@ -166,6 +169,23 @@ public class TestFrame extends JFrame{
                 TestFrame.this.gp.nextQuestion();
             }
         });
+        
+        zoomIn.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                TestFrame.this.gp.zoom(true);
+            }
+        });
+        
+        zoomOut.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                TestFrame.this.gp.zoom(false);
+            }
+        });
+        
     }
     
     public void setModel(Model gm){
