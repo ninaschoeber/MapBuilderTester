@@ -11,6 +11,7 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -37,6 +38,7 @@ public class BuildFrame extends JFrame {
         private JButton redo;
         private JButton zoomIn;
         private JButton zoomOut;
+        private JButton testMap;
         
         private JButton save;
         private JButton load;
@@ -59,7 +61,7 @@ public class BuildFrame extends JFrame {
             newFile.setContentAreaFilled(false);
             buttons.add(newFile);
         } catch (IOException ex) {
-            System.out.println("Error loading button save");
+            System.out.println("Error loading button new");
         }
         
         try {
@@ -130,6 +132,7 @@ public class BuildFrame extends JFrame {
         
         buttons.add(zoomIn = new JButton("Zoom in"));
         buttons.add(zoomOut = new JButton("Zoom out"));
+        buttons.add(testMap = new JButton("Test Map"));
         
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);       
         this.add(buttons, BorderLayout.NORTH);
@@ -262,6 +265,22 @@ public class BuildFrame extends JFrame {
             public void actionPerformed(ActionEvent e)
             {
                 BuildFrame.this.gp.zoom(false);
+            }
+        });
+
+        testMap.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Object[] choices = { "Go to Tester", "Stay in Builder" };
+                int mode = JOptionPane.showOptionDialog(null, "Save before switching modes",
+                "Warning: unsaved data will be lost", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, choices, choices[0]); 
+                System.out.println(mode);
+                if(mode==0){
+                    new TestFrame(BuildFrame.this.gp.getModel());
+                    BuildFrame.this.dispatchEvent(new WindowEvent(BuildFrame.this, WindowEvent.WINDOW_CLOSING));
+                }
+                
             }
         });
         

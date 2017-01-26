@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -36,11 +37,12 @@ public class TestFrame extends JFrame{
         private JButton load;
         private JButton zoomIn;
         private JButton zoomOut;
+        private JButton editMap;
     
     private Panel gp;
         
     public TestFrame(){
-        super("Map Builder");
+        super("Map Tester");
         
         
         buttons = new JPanel(new FlowLayout());
@@ -62,6 +64,7 @@ public class TestFrame extends JFrame{
             start = new JButton(new ImageIcon(buttonIcon));
             start.setBorder(BorderFactory.createEmptyBorder());
             start.setContentAreaFilled(false);
+            buttons.add(start);
         } catch (IOException ex) {
             System.out.println("Error loading button start");
         }
@@ -100,6 +103,7 @@ public class TestFrame extends JFrame{
         }
         buttons.add(zoomIn = new JButton("Zoom in"));
         buttons.add(zoomOut = new JButton("Zoom out"));
+        buttons.add(editMap = new JButton("Edit Map"));
         
         this.add(buttons, BorderLayout.NORTH);
         this.add(gp = new Panel(Panel.TEST));
@@ -185,6 +189,17 @@ public class TestFrame extends JFrame{
                 TestFrame.this.gp.zoom(false);
             }
         });
+        
+        editMap.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                new BuildFrame(TestFrame.this.gp.getModel());
+                TestFrame.this.dispatchEvent(new WindowEvent(TestFrame.this, WindowEvent.WINDOW_CLOSING));
+
+            }
+        });
+        
         
     }
     

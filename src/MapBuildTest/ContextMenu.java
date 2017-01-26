@@ -19,6 +19,9 @@ public class ContextMenu extends JPopupMenu{
     
     Panel panel;
     public ContextMenu(Panel p){
+        if(p.getType()==1){
+            return;
+        }
         this.add(remove = new JMenuItem("Remove"));
         this.add(rename = new JMenuItem("Rename"));
         this.add(changeColour = new JMenuItem("Change Pin Colour"));
