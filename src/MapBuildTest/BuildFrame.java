@@ -30,9 +30,9 @@ import javax.swing.JPanel;
 public class BuildFrame extends JFrame {
     
     private JPanel buttons;
+        private JButton newFile;
         private JButton newNode;
         private JButton changeNode;
-        private JButton deleteNode;
         private JButton undo;
         private JButton redo;
         private JButton zoomIn;
@@ -51,7 +51,19 @@ public class BuildFrame extends JFrame {
 
         //This should be made less bulky code (list?)
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconSave.png"));
+            //Image buttonIcon = ImageIO.read(new File("../resources/iconNew.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconNew.png"));
+            buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
+            newFile = new JButton(new ImageIcon(buttonIcon));
+            newFile.setBorder(BorderFactory.createEmptyBorder());
+            newFile.setContentAreaFilled(false);
+            buttons.add(newFile);
+        } catch (IOException ex) {
+            System.out.println("Error loading button save");
+        }
+        
+        try {
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconSave.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             save = new JButton(new ImageIcon(buttonIcon));
             save.setBorder(BorderFactory.createEmptyBorder());
@@ -62,7 +74,7 @@ public class BuildFrame extends JFrame {
         }
         
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconOpen.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconOpen.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             load = new JButton(new ImageIcon(buttonIcon));
             load.setBorder(BorderFactory.createEmptyBorder());
@@ -73,7 +85,7 @@ public class BuildFrame extends JFrame {
         }
         
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconImage.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconImage.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             changeBG = new JButton(new ImageIcon(buttonIcon));
             changeBG.setBorder(BorderFactory.createEmptyBorder());
@@ -84,7 +96,7 @@ public class BuildFrame extends JFrame {
         }
                 
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconNewPin.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconNewPin.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             newNode = new JButton(new ImageIcon(buttonIcon));
             newNode.setBorder(BorderFactory.createEmptyBorder());
@@ -95,7 +107,7 @@ public class BuildFrame extends JFrame {
         }
 
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconUndo.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconUndo.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             undo = new JButton(new ImageIcon(buttonIcon));
             undo.setBorder(BorderFactory.createEmptyBorder());
@@ -106,7 +118,7 @@ public class BuildFrame extends JFrame {
         }
         
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconRedo.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconRedo.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             redo = new JButton(new ImageIcon(buttonIcon));
             redo.setBorder(BorderFactory.createEmptyBorder());
@@ -140,6 +152,14 @@ public class BuildFrame extends JFrame {
     
     private void addListeners(){
         //menubar buttons
+
+        newFile.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                
+            }
+        });
+        
         
         save.addActionListener(new ActionListener(){
             @Override
@@ -166,7 +186,7 @@ public class BuildFrame extends JFrame {
                 int code = fc.showOpenDialog(BuildFrame.this);
                 if(code == JFileChooser.APPROVE_OPTION){
                     try {
-                        BuildFrame.this.gp.getModel().load(fc.getSelectedFile());
+                        BuildFrame.this.gp.getModel().loadModel(fc.getSelectedFile());
                     }catch(IOException ex){
                         JOptionPane.showMessageDialog(BuildFrame.this, "Error loading file", "Warning!", JOptionPane.WARNING_MESSAGE);
                     }

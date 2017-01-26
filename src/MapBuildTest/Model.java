@@ -42,7 +42,7 @@ public class Model{
     
     public Model(File model) throws IOException {
         this();
-        this.load(model);
+        this.loadModel(model);
     }
     
     public void edit(AbstractUndoableEdit edit) {
@@ -133,17 +133,21 @@ public class Model{
         
         if(!f.exists()) f.createNewFile();
         
-        PrintWriter writer = new PrintWriter(f);
-        if(bg==null){
-            throw new IllegalArgumentException("Cannot save without image");
+        try (PrintWriter writer = new PrintWriter(f)) {
+            if(bg==null){
+                throw new IllegalArgumentException("Cannot save without image");
+            }
+            writer.println(scale);
+            writer.println(bg.getPath());
+            writer.println(points.size());
+            for(MapPoint gv : points) writer.println(gv.saveString());
+            
+            writer.flush();
+        } catch(IllegalArgumentException e){
+            System.out.println(e.getMessage());
+        } catch(Exception ex){
+            System.out.println("Saving failed");
         }
-        writer.println(scale);
-        writer.println(bg.getPath());
-        writer.println(points.size());
-        for(MapPoint gv : points) writer.println(gv.saveString());
-        
-        writer.flush();
-        writer.close();
     }
        
     
@@ -164,7 +168,7 @@ public class Model{
         this.change();
     }
 
-    public void load(File input) throws IOException {
+    public void loadModel(File input) throws IOException {
         String buffer;
         
         //empty model

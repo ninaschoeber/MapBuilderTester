@@ -46,7 +46,7 @@ public class TestFrame extends JFrame{
         buttons = new JPanel(new FlowLayout());
         
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconOpen.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconOpen.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             load = new JButton(new ImageIcon(buttonIcon));
             load.setBorder(BorderFactory.createEmptyBorder());
@@ -57,7 +57,7 @@ public class TestFrame extends JFrame{
         }
         
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconStart.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconStart.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             start = new JButton(new ImageIcon(buttonIcon));
             start.setBorder(BorderFactory.createEmptyBorder());
@@ -67,7 +67,7 @@ public class TestFrame extends JFrame{
         }
         
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconRestart.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconRestart.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             restart = new JButton(new ImageIcon(buttonIcon));
             restart.setBorder(BorderFactory.createEmptyBorder());
@@ -78,7 +78,7 @@ public class TestFrame extends JFrame{
         }
                 
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconNext.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconNext.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             next = new JButton(new ImageIcon(buttonIcon));
             next.setBorder(BorderFactory.createEmptyBorder());
@@ -89,7 +89,7 @@ public class TestFrame extends JFrame{
         }
         
         try {
-            Image buttonIcon = ImageIO.read(new File("resources/iconHighlight.png"));
+            Image buttonIcon = ImageIO.read(BuildFrame.class.getResourceAsStream("/resources/iconHighlight.png"));
             buttonIcon = buttonIcon.getScaledInstance(-1, 80, Image.SCALE_SMOOTH);
             highlight = new JButton(new ImageIcon(buttonIcon));
             highlight.setBorder(BorderFactory.createEmptyBorder());
@@ -133,7 +133,7 @@ public class TestFrame extends JFrame{
                 int code = fc.showOpenDialog(TestFrame.this);
                 if(code == JFileChooser.APPROVE_OPTION){
                     try{
-                        TestFrame.this.gp.getModel().load(fc.getSelectedFile());
+                        TestFrame.this.gp.getModel().loadModel(fc.getSelectedFile());
                     }catch(IOException ex){
                         JOptionPane.showMessageDialog(TestFrame.this, "Error loading map from file", "Warning!", JOptionPane.WARNING_MESSAGE);
                     }
